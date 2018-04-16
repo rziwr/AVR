@@ -11,16 +11,16 @@
 
 static volatile uint8_t have_new_sample;
 static volatile adc_samp_typedef sample_to_write;
-static volatile adc_samp_typedef sample_cerrunt;
+static volatile adc_samp_typedef sample_current;
 
 uint8_t is_new_adc_sample (void) {
 	return have_new_sample;
 }
 
 void adc_get_sample (adc_samp_typedef *samp){
-	sample_cerrunt = sample_to_write;
+	sample_current = sample_to_write;
 	
-	if (sample.channel >= ADC_CHANNEL_COUNT){
+	if (sample_current.channel >= ADC_CHANNEL_COUNT){
 		sample_to_write.channel = 0;
 	} else {
 		sample_to_write.channel++;
@@ -28,8 +28,8 @@ void adc_get_sample (adc_samp_typedef *samp){
 }
 
 ISR (ADC_vect) {
-	uint8_t i;
-	uint8_t j;
+	//uint8_t i;
+	//uint8_t j;
 	
 	cli();
 	
@@ -43,7 +43,7 @@ ISR (ADC_vect) {
 
 	
 	ADMUX &= 0xf0;
-	ADMUX |= sample.channel;
+	ADMUX |= sample_current.channel;
 	
 	sample_to_write.val_raw = ADC;
 	
@@ -66,21 +66,21 @@ ISR (ADC_vect) {
 	}*/
 	
 	ADMUX &= 0b1111;
-	ADMUX |= cur_chan;
+	ADMUX |= sample_to_write.channel;
 	sei();
 }
 
 
 void init_adc (void) {
-	uint8_t i;
-	uint8_t j;
+	//uint8_t i;
+	//uint8_t j;
 	// initialize arrays for measurements
-	for (i = 0; i < ADC_SAMPLES_COUNT; i++){
+	/*for (i = 0; i < ADC_SAMPLES_COUNT; i++){
 		sample_number [i] = 0;
 		for (j = 0; j < ADC_CHANNEL_COUNT; j++){
 			adc_data [j] [i] = 0;
 		}
-	}
+	}*/
 	
 	// initialize ADC
 	ADMUX |= (1 << REFS0) | (1 << REFS1);	// AREF = AVcc
@@ -92,7 +92,7 @@ void init_adc (void) {
 	// Start conversation	
 	ADCSRA = (1 << ADEN);	
 	// switch to next channel
-	cur_chan++;
+	//cur_chan++;
 	
 	sei();
 }

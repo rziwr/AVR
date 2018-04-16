@@ -3,6 +3,7 @@
 
 #include "uart.h"
 #include "timer.h"
+#include "adc.h"
 
 
 int main () {
@@ -16,7 +17,7 @@ int main () {
 	
 	init_uart ();
 	init_timer ();
-	
+	init_adc ();
 	sei();
 	
 	while (1){
