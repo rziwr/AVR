@@ -10,6 +10,7 @@ TARG= $(BUILD_DIR)/$(APP_NAME)
  
 CC = avr-gcc
 OBJCOPY = avr-objcopy
+OBJDUMP = avr-objdump
 SIZE = avr-size
  
 SOURCES_LIST = main.c uart.c timer.c
@@ -40,17 +41,18 @@ LDFLAGS = -mmcu=$(MCU)  \
 	-Os  \
 	-Werror 
  
-all: $(TARG)
+all: $(TARG).hex
 #@echo
 #@echo "Build finished\n"
  
-$(TARG): $(OBJS)
-	@$(CC) $(LDFLAGS) -o $@.elf  $(OBJS) -lm
+$(TARG).hex: $(TARG).elf
+	@$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $< $@
 
+$(TARG).elf: $(OBJS)
+	@$(CC) $(LDFLAGS) -o $@  $(OBJS) -lm
 #	$(OBJCOPY) -O binary -R .eeprom -R .nwram  $@.elf $@.bin
-	
-	@$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
-	@$(SIZE) $@.elf -C --mcu=$(MCU)
+	@echo "\n\n"
+	@$(SIZE) $@ -C --mcu=$(MCU)
 
  
 $(OBJ_DIR)/%.o: $(SOURCE_DIR)/%.c
@@ -62,3 +64,6 @@ clean:
 
 burn: $(TARG).hex
 	avrdude -c usbasp -p m168 -U flash:w:$(TARG).hex
+
+disasm: $(TARG).elf
+	$(OBJDUMP) -S  --disassemble $(TARG).elf > $(TARG).lst
