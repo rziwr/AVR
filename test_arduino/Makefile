@@ -1,0 +1,64 @@
+
+APP_NAME= test
+
+SOURCE_DIR= ./src
+INCLUDES_DIR= ./src
+BUILD_DIR= ./build
+OBJ_DIR= ./obj
+
+TARG= $(BUILD_DIR)/$(APP_NAME)
+ 
+CC = avr-gcc
+OBJCOPY = avr-objcopy
+SIZE = avr-size
+ 
+SOURCES_LIST = main.c uart.c timer.c
+
+INCLUDES_LIST = test.h config.h
+
+SRCS = $(addprefix $(SOURCE_DIR)/,$(SOURCES_LIST))
+INCS = $(addprefix -I$(INCLUDES_DIR)/,$(INCLUDES_LIST))
+
+OBJECTS_LIST = $(addprefix obj/,$(SOURCES_LIST)) 
+OBJS = $(OBJECTS_LIST:.c=.o)
+ 
+MCU=atmega168
+ 
+CFLAGS = \
+	-mmcu=$(MCU) \
+	-Wall \
+	-g \
+	-Os \
+	-Werror \
+	-lm  \
+	-mcall-prologues \
+	-DF_CPU=16000000
+	
+LDFLAGS = -mmcu=$(MCU)  \
+	-Wall \
+	-g \
+	-Os  \
+	-Werror 
+ 
+all: $(TARG)
+#@echo
+#@echo "Build finished\n"
+ 
+$(TARG): $(OBJS)
+	@$(CC) $(LDFLAGS) -o $@.elf  $(OBJS) -lm
+
+#	$(OBJCOPY) -O binary -R .eeprom -R .nwram  $@.elf $@.bin
+	
+	@$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
+	@$(SIZE) $@.elf -C --mcu=$(MCU)
+
+ 
+$(OBJ_DIR)/%.o: $(SOURCE_DIR)/%.c
+	$(CC) $(CFLAGS) -I $(INCLUDES_DIR) -c $< -o $@
+ 
+clean:
+	rm  $(BUILD_DIR)/* 
+	rm  $(OBJ_DIR)/*
+
+burn: $(TARG).hex
+	avrdude -c usbasp -p m168 -U flash:w:$(TARG).hex
