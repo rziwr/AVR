@@ -2,4 +2,6 @@
 *.elf
 *.hex
 *.sublime-workspace
+*.sublime-project
 *.lst
+*obj/created
