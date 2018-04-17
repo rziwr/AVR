@@ -18,7 +18,8 @@ uint8_t is_new_adc_sample (void) {
 }
 
 void adc_start (void){
-	ADC |= (1 << ADCSRA);
+	//ADC |= (1 << ADCSRA);
+	ADCSRA |= (1 << ADSC);
 }
 
 void adc_get_sample (adc_samp_typedef *samp){
@@ -41,7 +42,7 @@ ISR (ADC_vect) {
 	//uint8_t j;
 	
 	cli();
-	
+	PINB = (1 << PB5);
 	if (have_new_sample == ADC_HAS_NEW_SAMPLE){
 		// Error situation...
 		sei();
@@ -96,13 +97,15 @@ void init_adc (void) {
 	
 	// initialize ADC
 	ADMUX |= (1 << REFS0) | (1 << REFS1);	// AREF = AVcc
-	ADMUX &= (1 << MUX3) | (1 << MUX2) | (1 << MUX1) | (1 << MUX0) | (1 << ADLAR);	// Set 1st ADC channel 0
-	ADMUX &= ADLAR;
+	ADMUX &= ~((1 << MUX3) | (1 << MUX2) | (1 << MUX1) | (1 << MUX0) | (1 << ADLAR));	// Set 1st ADC channel 0
+	//ADMUX |= 0x0e;
+	
+	
 	ADCSRA = //(1<<ADEN) |		// Enable ADC
 		(1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);	// Set prescaler to 128
 		
 	// Start conversation	
-	ADCSRA = (1 << ADEN);	
+	ADCSRA |= (1 << ADEN) | (1 << ADIE);	
 	// switch to next channel
 	//cur_chan++;
 	

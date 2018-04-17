@@ -22,7 +22,7 @@ int main () {
 	//init_adc ();
 	sei();
 	
-	//printf ("Start\r\n");
+	printf ("Start\r\n");
 
 	while (1){
 		//PORTB |= (1 << PB5);

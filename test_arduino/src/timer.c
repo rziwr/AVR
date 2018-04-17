@@ -27,7 +27,7 @@ ISR (TIMER1_COMPA_vect){
 void init_timer (void){
 
 	//PORTB = (1 << PB5);
-	PINB = (1 << PB5);
+	//PINB = (1 << PB5);
 	
     //OCR1A = 0x3D08;
     OCR1A = 25000;

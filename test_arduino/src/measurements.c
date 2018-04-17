@@ -21,13 +21,11 @@ void init_measurements (void) {
 void measure_tick (void){
 	adc_samp_typedef sample;
 	//printf ("1\r\n");
-
-
+	//PINB = (1 << PB5);
 	if (is_new_adc_sample() == ADC_HAS_NEW_SAMPLE){
 		PINB = (1 << PB5);
 		adc_get_sample (&sample);
-		printf ("1");
-		printf ("2%d\r\n", sample.val_raw);
+		printf ("%d\r\n", sample.val_raw);
 	}
 }
 
@@ -89,18 +87,4 @@ void put_sample (uint16_t samp, uint8_t ch){
 	//sma_data[ch].samp_counter++;
 	//sma_data[ch].samp_counter &= ADC_SAMPLES_COUNT_MASK;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
