@@ -1,6 +1,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "adc.h"
+#include "uart.h"
+#include <stdio.h>
 
 
 
@@ -17,9 +19,15 @@ void init_measurements (void) {
 
 
 void measure_tick (void){
-	
-	if (is_new_adc_sample()){
-		
+	adc_samp_typedef sample;
+	//printf ("1\r\n");
+
+
+	if (is_new_adc_sample() == ADC_HAS_NEW_SAMPLE){
+		PINB = (1 << PB5);
+		adc_get_sample (&sample);
+		printf ("1");
+		printf ("2%d\r\n", sample.val_raw);
 	}
 }
 

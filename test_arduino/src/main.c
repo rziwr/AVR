@@ -3,7 +3,8 @@
 
 #include "uart.h"
 #include "timer.h"
-#include "adc.h"
+#include "measurements.h"
+//#include "adc.h"
 
 
 int main () {
@@ -17,9 +18,12 @@ int main () {
 	
 	init_uart ();
 	init_timer ();
-	init_adc ();
+	init_measurements ();
+	//init_adc ();
 	sei();
 	
+	//printf ("Start\r\n");
+
 	while (1){
 		//PORTB |= (1 << PB5);
 		_delay_ms (5);
@@ -32,7 +36,7 @@ int main () {
 		send_UART('\r');
 		send_UART('\n');
 		*/
-//		printf ("%d,%d,%d,%d\r\n", i, 100 - i, i/2 + 25 , i%10 + 50);
+		//printf ("%d,%d,%d,%d\r\n", i, 100 - i, i/2 + 25 , i%10 + 50);
 		
 		if (up_count_flag){
 			i++;
@@ -46,7 +50,8 @@ int main () {
 				up_count_flag = 1;
 				i += 2;
 			}
-		}	
+		}
+		measure_tick ();	
 	}
 	
 	return 0;

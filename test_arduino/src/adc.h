@@ -1,6 +1,6 @@
 #include <avr/io.h>
 
-#define ADC_START_CONVERSION () (ADSC |= (1 << ADCSRA))
+#define ADC_START_CONVERSION (ADSC |= (1 << ADCSRA))
 
 // ADC_CHANNEL_COUNT
 #define ADC_CHANNEL_COUNT	4
@@ -19,3 +19,5 @@ typedef struct {
 
 void init_adc (void);
 uint8_t is_new_adc_sample (void);
+void adc_get_sample (adc_samp_typedef *samp);
+void adc_start (void);

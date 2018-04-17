@@ -17,14 +17,23 @@ uint8_t is_new_adc_sample (void) {
 	return have_new_sample;
 }
 
+void adc_start (void){
+	ADC |= (1 << ADCSRA);
+}
+
 void adc_get_sample (adc_samp_typedef *samp){
 	sample_current = sample_to_write;
 	
+	samp->channel = sample_to_write.channel; 
+	samp->val_raw = sample_to_write.val_raw;
+
 	if (sample_current.channel >= ADC_CHANNEL_COUNT){
 		sample_to_write.channel = 0;
 	} else {
 		sample_to_write.channel++;
 	}	
+
+	have_new_sample = ADC_HAS_NOT_NEW_SAMPLE;
 }
 
 ISR (ADC_vect) {
@@ -39,11 +48,11 @@ ISR (ADC_vect) {
 		return;
 	}
 	have_new_sample = ADC_HAS_NEW_SAMPLE;
-	
+	//PINB = (1 << PB5);
 
 	
-	ADMUX &= 0xf0;
-	ADMUX |= sample_current.channel;
+//	ADMUX &= 0xf0;
+//	ADMUX |= sample_current.channel;
 	
 	sample_to_write.val_raw = ADC;
 	
@@ -64,9 +73,12 @@ ISR (ADC_vect) {
 		}
 		calc_done = 1;
 	}*/
-	
+
+
+/*	Commetned in test purposes	
 	ADMUX &= 0b1111;
 	ADMUX |= sample_to_write.channel;
+*/
 	sei();
 }
 

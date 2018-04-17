@@ -15,7 +15,11 @@ OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
 SIZE = avr-size
  
-SOURCES_LIST = main.c uart.c timer.c adc.c
+SOURCES_LIST = main.c \
+				uart.c \
+				timer.c \
+				adc.c \
+				measurements.c
 
 INCLUDES_LIST = test.h config.h
 
